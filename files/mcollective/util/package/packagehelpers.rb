@@ -201,14 +201,14 @@ module MCollective
           apt_checkupdates
         end
 
-        def self.apt_upgrade(pkgs)
-          raise "Cannot find apt-get at /usr/bin/apt-get" unless File.exist?("/usr/bin/apt-get")
+        def self.aptitude_upgrade(pkgs)
+          raise "Cannot find aptitude at /usr/bin/aptitude" unless File.exist?("/usr/bin/aptitude")
 
           result = {:exitcode => nil,
                     :output => ""}
 
           if "" != pkgs
-            cmd = Shell.new("/usr/bin/apt-get -yq=2 --no-install-recommends upgrade #{pkgs}", :stdout => result[:output])
+            cmd = Shell.new("/usr/bin/aptitude -yq=2 --no-install-recommends safe-upgrade #{pkgs}", :stdout => result[:output])
             cmd.runcommand
             result[:exitcode] = cmd.status.exitstatus
           else

@@ -83,7 +83,7 @@ module MCollective
         reply[:output] = result[:output]
       end
 
-      action "apt_upgrade" do
+      action "aptitude_upgrade" do
         pkgs = request[:pkgs]
         result = package_helper.apt_upgrade(pkgs)
         reply[:exitcode] = result[:exitcode]

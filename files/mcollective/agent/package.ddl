@@ -293,7 +293,7 @@ action "apt_autoremove", :description => "Remove packages that were automaticall
            :display_as => "Exit Code"
 end
 
-action "apt_upgrade", :description => "Upgrade packages that were already installed." do
+action "aptitude_upgrade", :description => "Upgrade packages that were already installed." do
     input :pkgs,
           :prompt      => "Packages",
           :description => "Packages to be upgraded",

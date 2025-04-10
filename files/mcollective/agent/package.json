@@ -118,7 +118,7 @@
       "description": "Remove packages that were automatically installed to satisfy dependencies for other packages and are now no longer needed."
     },
     {
-      "action": "apt_upgrade",
+      "action": "aptitude_upgrade",
       "input": {
         "pkgs": {
           "prompt": "Packages",

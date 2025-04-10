@@ -25,7 +25,7 @@ The ACTION can be one of the following:
     apt_checkupdates - display available updates from apt
     apt_clean        - clean the apt cache
     apt_autoremove   - remove obsolete dependencies
-    apt_upgrade      - upgrade an already installed package
+    aptitute_upgrade - upgrade already installed package(s)
     checkupdates     - display available updates
 
       USAGE
@@ -75,13 +75,13 @@ The ACTION can be one of the following:
             status
             search
           ]
-          all_actions = valid_global_actions.concat(valid_actions).concat(%w[apt_upgrade])
+          all_actions = valid_global_actions.concat(valid_actions).concat(%w[aptitude_upgrade])
 
           if valid_actions.include?(ARGV[0])
             configuration[:action] = ARGV.shift
             configuration[:package] = ARGV.shift
-          elsif "apt_upgrade" == ARGV[0]
-            # For clarity we only allow apt_upgrade '<pkgs>' and not the other way around
+          elsif "aptitude_upgrade" == ARGV[0]
+            # For clarity we only allow aptitude_upgrade '<pkgs>' and not the other way around
             configuration[:action] = ARGV.shift
             configuration[:pkgs] = ARGV.shift
           elsif valid_global_actions.include?(ARGV[0])

@@ -14,7 +14,7 @@ This agent provides the following actions, for details about each please run `mc
  * **apt_clean** - Clean the APT cache
  * **apt_autoremove** - Remove obsolete dependencies
  * **apt_update** - Update the apt cache
- * **apt_upgrade** - Update package(s)
+ * **aptitude_upgrade** - Upgrade package(s)
  * **checkupdates** - Check for updates
  * **count** - Get number of packages installed
  * **install** - Install a package
