@@ -694,6 +694,141 @@ rubygem-bolt"
           end
         end
 
+        describe "#apt_clean" do
+          it "raises if the apt-get binary cannot be found" do
+            File.expects(:exist?).with("/usr/bin/apt-get").returns(false)
+            lambda {
+              described_class.apt_clean("auto")
+            }.should raise_error("Cannot find apt at /usr/bin/apt-get")
+          end
+
+          it "raises if an unsupported clean mode is supplied" do
+            File.expects(:exist?).with("/usr/bin/apt-get").returns(true)
+            lambda {
+              described_class.apt_clean("rspec")
+            }.should raise_error("Unsupported apt clean mode: rspec")
+          end
+
+          it "raises if the apt command failed" do
+            File.stubs(:exist?).with("/usr/bin/apt-get").returns(true)
+            shell = mock
+            status = mock
+            Shell.expects(:new).with("/usr/bin/apt-get autoclean", :stdout => "").returns(shell)
+            shell.stubs(:runcommand)
+            shell.stubs(:status).returns(status)
+            status.stubs(:exitstatus).returns(-1)
+
+            lambda {
+              described_class.apt_clean("auto")
+            }.should raise_error("Apt clean failed, exit code was -1")
+          end
+
+          it "cleans with the correct clean mode" do
+            File.stubs(:exist?).with("/usr/bin/apt-get").returns(true)
+            shell = mock
+            status = mock
+            shell.stubs(:runcommand)
+            shell.stubs(:status).returns(status)
+            status.stubs(:exitstatus).returns(0)
+
+            ["auto", "dist", ""].each do |mode|
+              Shell.expects(:new).with("/usr/bin/apt-get -y #{mode}clean", :stdout => "").returns(shell)
+              result = described_class.apt_clean(mode)
+              result.should eq({:exitcode => 0, :output => ""})
+            end
+          end
+        end
+
+        describe "#apt_autoremove" do
+          it "raises if the apt-get binary cannot be found" do
+            File.expects(:exist?).with("/usr/bin/apt-get").returns(false)
+            lambda {
+              described_class.apt_autoremove("--purge")
+            }.should raise_error("Cannot find apt at /usr/bin/apt-get")
+          end
+
+          it "raises if an unsupported autoremove mode is supplied" do
+            File.expects(:exist?).with("/usr/bin/apt-get").returns(true)
+            lambda {
+              described_class.apt_autoremove("rspec")
+            }.should raise_error("Unsupported apt autoremove mode: rspec")
+          end
+
+          it "raises if the apt command failed" do
+            File.stubs(:exist?).with("/usr/bin/apt-get").returns(true)
+            shell = mock
+            status = mock
+            Shell.expects(:new).with("/usr/bin/apt-get -y autoremove --purge", :stdout => "").returns(shell)
+            shell.stubs(:runcommand)
+            shell.stubs(:status).returns(status)
+            status.stubs(:exitstatus).returns(-1)
+
+            lambda {
+              described_class.apt_autoremove("--purge")
+            }.should raise_error("Apt autoremove failed, exit code was -1")
+          end
+
+          it "removes with the correct autoremove mode" do
+            File.stubs(:exist?).with("/usr/bin/apt-get").returns(true)
+            shell = mock
+            status = mock
+            shell.stubs(:runcommand)
+            shell.stubs(:status).returns(status)
+            status.stubs(:exitstatus).returns(0)
+
+            ["--purge", ""].each do |mode|
+              Shell.expects(:new).with("/usr/bin/apt-get -y autoremove #{mode}", :stdout => "").returns(shell)
+              result = described_class.apt_autoremove(mode)
+              result.should eq({:exitcode => 0, :output => ""})
+            end
+          end
+        end
+
+        describe "#apt_upgrade" do
+          it "raises if the apt-get binary cannot be found" do
+            File.expects(:exist?).with("/usr/bin/apt-get").returns(false)
+            lambda {
+              described_class.apt_upgrade("apt")
+            }.should raise_error("Cannot find apt at /usr/bin/apt-get")
+          end
+
+          it "raises if no packages are supplied" do
+            File.expects(:exist?).with("/usr/bin/apt-get").returns(true)
+            lambda {
+              described_class.apt_upgrade()
+            }.should raise_error("Unsupported apt autoremove mode: rspec")
+          end
+
+          it "raises if the apt command failed" do
+            File.stubs(:exist?).with("/usr/bin/apt-get").returns(true)
+            shell = mock
+            status = mock
+            Shell.expects(:new).with("/usr/bin/apt-get -yq=2 upgrade apt", :stdout => "").returns(shell)
+            shell.stubs(:runcommand)
+            shell.stubs(:status).returns(status)
+            status.stubs(:exitstatus).returns(-1)
+
+            lambda {
+              described_class.apt_autoremove("apt")
+            }.should raise_error("Apt autoremove failed, exit code was -1")
+          end
+
+          it "upgrades the correct packages" do
+            File.stubs(:exist?).with("/usr/bin/apt-get").returns(true)
+            shell = mock
+            status = mock
+            shell.stubs(:runcommand)
+            shell.stubs(:status).returns(status)
+            status.stubs(:exitstatus).returns(0)
+
+            ["apt", "apt init"].each do |pkgs|
+              Shell.expects(:new).with("/usr/bin/apt-get -yq=2 upgrade #{pkgs}", :stdout => "").returns(shell)
+              result = described_class.apt_autoremove(pkgs)
+              result.should eq({:exitcode => 0, :output => ""})
+            end
+          end
+        end
+
         describe "#pkg_checkupdates" do
           it "raises if pkg cannot be found on the system" do
             File.expects(:exist?).with("/usr/sbin/pkg").returns(false)

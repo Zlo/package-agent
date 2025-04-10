@@ -23,6 +23,9 @@ The ACTION can be one of the following:
     yum_checkupdates - display available updates from yum
     apt_update       - update all available packages
     apt_checkupdates - display available updates from apt
+    apt_clean        - clean the apt cache
+    apt_autoremove   - remove obsolete dependencies
+    apt_upgrade      - upgrade an already installed package
     checkupdates     - display available updates
 
       USAGE
@@ -40,7 +43,7 @@ The ACTION can be one of the following:
 
       def handle_message(action, message, *args)
         messages = {
-          1 => "Please specify package name and action",
+          1 => "Please specify action and package name(s)",
           2 => "Action has to be one of %s",
           3 => "Do you really want to operate on packages unfiltered? (y/n): "
         }
@@ -56,6 +59,8 @@ The ACTION can be one of the following:
           apt_update
           checkupdates
           apt_checkupdates
+          apt_clean
+          apt_autoremove
           refresh
         ]
         if (ARGV.size < 2) && !valid_global_actions.include?(ARGV[0])
@@ -69,16 +74,25 @@ The ACTION can be one of the following:
             update
             status
             search
-          ].concat(valid_global_actions)
+          ]
+          all_actions = valid_global_actions.concat(valid_actions).concat(%w[apt_upgrade])
 
           if valid_actions.include?(ARGV[0])
             configuration[:action] = ARGV.shift
-            configuration[:package] = ARGV.shift unless valid_global_actions.include?(ARGV[0])
+            configuration[:package] = ARGV.shift
+          elsif "apt_upgrade" == ARGV[0]
+            # For clarity we only allow apt_upgrade '<pkgs>' and not the other way around
+            configuration[:action] = ARGV.shift
+            configuration[:pkgs] = ARGV.shift
+          elsif valid_global_actions.include?(ARGV[0])
+            # Global actions have no package argument
+            configuration[:action] = ARGV.shift
+            configuration[:mode] = ARGV.shift
           elsif valid_actions.include?(ARGV[1])
             configuration[:package] = ARGV.shift
             configuration[:action] = ARGV.shift
           else
-            handle_message(:raise, 2, valid_actions.join(", "))
+            handle_message(:raise, 2, all_actions.join(", "))
           end
         end
       end
@@ -103,7 +117,9 @@ The ACTION can be one of the following:
         if configuration[:version].nil?
           pkg_result = pkg.send(
             configuration[:action],
-            :package => configuration[:package]
+            :package => configuration[:package],
+            :mode => configuration[:mode],
+            :pkgs => configuration[:pkgs]
           )
         else
           pkg_result = pkg.send(

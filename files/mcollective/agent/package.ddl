@@ -258,3 +258,55 @@ action "refresh", :description => "Update the available packages cache" do
            :description => "The exitcode from the package manager",
            :display_as => "Exit Code"
 end
+
+action "apt_clean", :description => "Clean the apt cache" do
+    input :mode,
+          :prompt      => "Apt clean mode",
+          :description => "One of the supported clean modes",
+          :type        => :list,
+          :optional    => true,
+          :list        => ["auto", "dist"]
+
+    output :output,
+           :description => "Output from apt-get",
+           :display_as  => "Output"
+
+    output :exitcode,
+           :description => "The exitcode from the apt-get command",
+           :display_as => "Exit Code"
+end
+
+action "apt_autoremove", :description => "Remove packages that were automatically installed to satisfy dependencies for other packages and are now no longer needed." do
+    input :mode,
+          :prompt      => "Apt autoremove mode",
+          :description => "Use purge to also clean up config files",
+          :type        => :list,
+          :optional    => true,
+          :list        => ["purge"]
+
+    output :output,
+           :description => "Output from apt-get",
+           :display_as  => "Output"
+
+    output :exitcode,
+           :description => "The exitcode from the apt-get command",
+           :display_as => "Exit Code"
+end
+
+action "apt_upgrade", :description => "Upgrade packages that were already installed." do
+    input :pkgs,
+          :prompt      => "Packages",
+          :description => "Packages to be upgraded",
+          :type        => :string,
+          :optional    => false,
+          :maxlength   => 1024,
+          :validation  => "^[a-zA-Z0-9_.:~ +-]*$"
+
+    output :output,
+           :description => "Output from apt-get",
+           :display_as  => "Output"
+
+    output :exitcode,
+           :description => "The exitcode from the apt-get command",
+           :display_as => "Exit Code"
+end

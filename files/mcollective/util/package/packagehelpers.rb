@@ -141,6 +141,49 @@ module MCollective
           result
         end
 
+        def self.apt_clean(clean_mode = "")
+          raise "Cannot find yum at /usr/bin/apt-get" unless File.exist?("/usr/bin/apt-get")
+
+          result = {:exitcode => nil,
+                    :output => ""}
+
+          if ["auto", "dist", ""].include?(clean_mode)
+            cmd = Shell.new("/usr/bin/apt-get #{clean_mode}clean", :stdout => result[:output])
+            cmd.runcommand
+            result[:exitcode] = cmd.status.exitstatus
+          else
+            raise "Unsupported apt clean mode: %s" % clean_mode
+          end
+
+          raise "Apt clean failed, exit code was #{result[:exitcode]}" unless result[:exitcode] == 0
+
+          result
+        end
+
+        def self.apt_autoremove(autoremove_mode = "")
+          raise "Cannot find yum at /usr/bin/apt-get" unless File.exist?("/usr/bin/apt-get")
+
+          result = {:exitcode => nil,
+                    :output => ""}
+
+          if ["purge", ""].include?(autoremove_mode)
+            if "purge" == autoremove_mode
+              flag = "--purge"
+            else
+              flag=""
+            end
+            cmd = Shell.new("/usr/bin/apt-get -y autoremove #{flag}", :stdout => result[:output])
+            cmd.runcommand
+            result[:exitcode] = cmd.status.exitstatus
+          else
+            raise "Unsupported apt autoremove mode: %s" % autoremove_mode
+          end
+
+          raise "Apt autoremove failed, exit code was #{result[:exitcode]}" unless result[:exitcode] == 0
+
+          result
+        end
+
         def self.apt_update
           raise "Cannot find apt-get at /usr/bin/apt-get" unless File.exist?("/usr/bin/apt-get")
 
@@ -157,6 +200,26 @@ module MCollective
           # actual status of the system.
           apt_checkupdates
         end
+
+        def self.apt_upgrade(pkgs)
+          raise "Cannot find apt-get at /usr/bin/apt-get" unless File.exist?("/usr/bin/apt-get")
+
+          result = {:exitcode => nil,
+                    :output => ""}
+
+          if "" != pkgs
+            cmd = Shell.new("/usr/bin/apt-get -yq=2 --no-install-recommends upgrade #{pkgs}", :stdout => result[:output])
+            cmd.runcommand
+            result[:exitcode] = cmd.status.exitstatus
+          else
+            raise "Must supply packages for upgrade"
+          end
+
+          raise "Apt upgrade failed, exit code was #{result[:exitcode]}" unless result[:exitcode] == 0
+
+          result
+        end
+
 
         def self.pkg_update
           raise "Cannot find pkg at /usr/sbin/pkg" unless File.exist?("/usr/sbin/pkg")

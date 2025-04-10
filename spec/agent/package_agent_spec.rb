@@ -221,6 +221,60 @@ module MCollective
         end
       end
 
+      describe "#apt_clean" do
+        it "should perform an apt-get clean" do
+          helper = mock
+          @agent.stubs(:package_helper).returns(helper)
+          helper.expects(:apt_clean).returns({:exitcode => 0, :output => "cleaned"})
+
+          result = @agent.call(:apt_clean)
+          result.should be_successful
+          result.should have_data_items({:exitcode => 0, :output => "cleaned"})
+        end
+
+        it "should fail if the command failed" do
+          @agent.stubs(:package_helper).raises("rspec_error")
+          result = @agent.call(:apt_clean)
+          result.should be_unknown_error
+        end
+      end
+
+      describe "#apt_autoremove" do
+        it "should perform an apt-get autoremove" do
+          helper = mock
+          @agent.stubs(:package_helper).returns(helper)
+          helper.expects(:apt_autoremove).returns({:exitcode => 0, :output => "removed"})
+
+          result = @agent.call(:apt_autoremove)
+          result.should be_successful
+          result.should have_data_items({:exitcode => 0, :output => "removed"})
+        end
+
+        it "should fail if the command failed" do
+          @agent.stubs(:package_helper).raises("rspec_error")
+          result = @agent.call(:apt_autoremove)
+          result.should be_unknown_error
+        end
+      end
+
+      describe "#apt_upgrade" do
+        it "should perform an apt-get upgrade" do
+          helper = mock
+          @agent.stubs(:package_helper).returns(helper)
+          helper.expects(:apt_upgrade).returns({:exitcode => 0, :output => "upgraded"})
+
+          result = @agent.call(:apt_upgrade)
+          result.should be_successful
+          result.should have_data_items({:exitcode => 0, :output => "upgraded"})
+        end
+
+        it "should fail if the command failed" do
+          @agent.stubs(:package_helper).raises("rspec_error")
+          result = @agent.call(:apt_upgrade)
+          result.should be_unknown_error
+        end
+      end
+
       describe "#package_provider" do
         before do
           described_class.unstub(:package_provider)

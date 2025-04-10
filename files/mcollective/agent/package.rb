@@ -69,6 +69,27 @@ module MCollective
         do_checkupdates_action("apt_checkupdates")
       end
 
+      action "apt_clean" do
+        clean_mode = request[:mode] || ""
+        result = package_helper.apt_clean(clean_mode)
+        reply[:exitcode] = result[:exitcode]
+        reply[:output] = result[:output]
+      end
+
+      action "apt_autoremove" do
+        autoremove_mode = request[:mode] || ""
+        result = package_helper.apt_autoremove(autoremove_mode)
+        reply[:exitcode] = result[:exitcode]
+        reply[:output] = result[:output]
+      end
+
+      action "apt_upgrade" do
+        pkgs = request[:pkgs]
+        result = package_helper.apt_upgrade(pkgs)
+        reply[:exitcode] = result[:exitcode]
+        reply[:output] = result[:output]
+      end
+
       # Identifies the configured package provider
       # Defaults to puppet
       def self.package_provider

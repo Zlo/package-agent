@@ -59,6 +59,93 @@
       "description": "Update the apt cache"
     },
     {
+      "action": "apt_clean",
+      "input": {
+        "mode": {
+          "prompt": "Apt clean mode",
+          "description": "One of the supported clean modes",
+          "type": "list",
+          "default": null,
+          "optional": true,
+          "list": [
+            "auto",
+            "dist"
+          ]
+        }
+      },
+      "output": {
+        "output": {
+          "description": "Output from apt-get",
+          "display_as": "Output",
+          "default": null
+        },
+        "exitcode": {
+          "description": "The exitcode from the apt-get command",
+          "display_as": "Exit Code",
+          "default": null
+        }
+      },
+      "display": "failed",
+      "description": "Clean the apt cache"
+    },
+    {
+      "action": "apt_autoremove",
+      "input": {
+        "mode": {
+          "prompt": "Apt autoremove mode",
+          "description": "Pass purge to also clean up config files",
+          "type": "list",
+          "default": null,
+          "optional": true,
+          "list": [
+            "purge"
+          ]
+        }
+      },
+      "output": {
+        "output": {
+          "description": "Output from apt-get",
+          "display_as": "Output",
+          "default": null
+        },
+        "exitcode": {
+          "description": "The exitcode from the apt-get command",
+          "display_as": "Exit Code",
+          "default": null
+        }
+      },
+      "display": "failed",
+      "description": "Remove packages that were automatically installed to satisfy dependencies for other packages and are now no longer needed."
+    },
+    {
+      "action": "apt_upgrade",
+      "input": {
+        "pkgs": {
+          "prompt": "Packages",
+          "description": "Packages to be upgraded",
+          "type": "string",
+	  "maxlength": 1024,
+          "optional": false,
+	  "default": null,
+	  "validation": "^[a-zA-Z0-9_.:~ +-]*$"
+        }
+      },
+      "output": {
+        "output": {
+          "description": "Output from apt-get",
+          "display_as": "Output",
+          "default": null
+        },
+        "exitcode": {
+          "description": "The exitcode from the apt-get command",
+          "display_as": "Exit Code",
+          "default": null
+        }
+      },
+      "display": "failed",
+      "description": "Upgrade packages that were already installed."
+    },
+    {
       "action": "checkupdates",
       "input": {
       },

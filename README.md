@@ -11,7 +11,10 @@ uses Puppet.  See the section later in this document about extendibility.
 This agent provides the following actions, for details about each please run `mco plugin doc agent/package`
 
  * **apt_checkupdates** - Check for APT updates
+ * **apt_clean** - Clean the APT cache
+ * **apt_autoremove** - Remove obsolete dependencies
  * **apt_update** - Update the apt cache
+ * **apt_upgrade** - Update package(s)
  * **checkupdates** - Check for updates
  * **count** - Get number of packages installed
  * **install** - Install a package

@@ -36,7 +36,7 @@ module MCollective
 
           lambda {
             @app.post_option_parser({})
-          }.should raise_error "Action has to be one of install, uninstall, purge, update, status, search, count, md5, yum_clean, yum_checkupdates, apt_update, checkupdates, apt_checkupdates, refresh"
+          }.should raise_error "Action has to be one of install, uninstall, purge, update, status, search, count, md5, yum_clean, yum_checkupdates, apt_update, checkupdates, apt_checkupdates, refresh, apt_clean, apt_autoremove, upgrade"
         end
 
         it 'should parse "action" "package" correctly' do
